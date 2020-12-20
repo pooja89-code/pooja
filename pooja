@@ -1,0 +1,78 @@
+# Import all the libraries requried
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import os
+
+
+%matplotlib inline
+
+ #Read the data
+link = "http://bit.ly/w-data"
+df = pd.read_csv(link)
+print("successfull")
+
+df.head()
+
+# plot the distribution of scores
+df.plot(x='Hours',y='Scores',style='o')  
+plt.title("Hours vs Scores")
+plt.xlabel("studied hours")
+plt.ylabel("percentage scores")
+plt.show()
+
+# divide the data into "attributes"and "labels" 
+x = df.iloc[:, :-1].values  
+y = df.iloc[:, 1].values
+
+# split this data into training and test sets. We'll do this by using Scikit-Learn's built-in train_test_split() method:
+from sklearn.model_selection import train_test_split  
+x_train, x_test, y_train, y_test = train_test_split(x, y, 
+                            test_size=0.2, random_state=0)
+
+df.info()
+
+# Train the algorithm
+from sklearn.linear_model import LinearRegression  
+regressor = LinearRegression()  
+regressor.fit(x_train, y_train)
+print("Complete")
+
+# Plotting the regression line
+line = regressor.coef_*x+regressor.intercept_
+
+# Plotting for the test data
+plt.scatter(x, y)
+plt.plot(x, line);
+plt.show()
+
+# Making Predictions
+print(x_test)
+# Testing data - In Hours
+y_pred = regressor.predict(x_test) 
+
+# Comparing Actual vs Predicted
+df = pd.DataFrame({'Actual': y_test, 'Predicted': y_pred})  
+df
+
+# prediction
+y_test_predict = regressor.predict(x_test)
+print(y_test_predict)
+
+# Score
+test_score = regressor.score(x_test, y_test)
+test_score
+
+fig = plt.figure(figsize = (10,8))
+plt.scatter(x_test, y_test)
+plt.plot(x_test, y_test_predict, c = 'r')
+plt.xlabel("Number of study hours")
+plt.ylabel("Score of student")
+plt.title("Study hours versus Test score")
+plt.show()
+
+# prediction
+hours = 9.25
+score = regressor.predict([[hours]])
+print("Number of hours" + str(hours))
+print("Predicted score = " +  str(score[0])
